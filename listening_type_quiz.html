@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta lang="en">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+<title>Listening Style Quiz</title>
+<style>
+    .checkContainer {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+    }
+    
+    :root {
+        --AIMblue: #4353A3;
+        --darkBlue: #38416D;
+        --teal: #5DC8B9;
+        --cream: #F1EEDE;
+        --grey: #e7e9ec;
+        --rust: #AF4510;
+        --navy: #12195C;
+        --white: #ffffff;
+        --lightBlue: #AEBAE4;
+    }
+
+    body {
+        font-family: "IBM Plex Sans", sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .quiz-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #F1EEDE30;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .slide-container {
+        padding: 30px;
+        padding-top: 15px;
+    }
+
+    .slide {
+        display: none;
+        width: 100%;
+    }
+
+    .slide.active {
+        display: block;
+    }
+
+    .slide h3 {
+        color: var(--AIMblue);
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    fieldset {
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .checkContainer {
+        display: flex;
+        align-items: flex-start;
+        margin: 20px 0;
+        padding: 15px;
+        background-color: var(--grey);
+        border-radius: 8px;
+    }
+
+    .instructions {
+        display: flex;
+        padding-left: 30px;
+    }
+
+    .checkContainer p {
+        margin: 0;
+        margin-right: 15px;
+        flex-grow: 1;
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    input[type="radio"] {
+        margin: 0;
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+
+    .navigation {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 20px 30px;
+        background-color: var(--grey);
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .nav-button {
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--AIMblue);
+        background-color: var(--white);
+        color: var(--AIMblue);
+        border-radius: 50%;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .nav-button:hover {
+        background-color: var(--lightBlue);
+    }
+
+    .nav-button.active {
+        background-color: var(--AIMblue);
+        color: var(--white);
+    }
+
+    .arrow-button {
+        padding: 10px 20px;
+        background-color: #5DC8B990;
+        color: black;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+    .arrow-button:hover:not(:disabled) {
+        background-color: var(--darkBlue);
+        color: white;
+    }
+
+    .arrow-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .submit-button {
+        padding: 15px 30px;
+        background-color: var(--teal);
+        color: var(--white);
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 20px auto;
+        display: none;
+    }
+
+    .submit-button:hover {
+        background-color: #4db5a5;
+    }
+
+    #results {
+        max-width: 800px;
+        margin: 15px auto;
+        background-color: var(--cream);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        display: none;
+        padding: 20px;
+    }
+
+    .progress-bar {
+        height: 6px;
+        background-color: var(--grey);
+        margin: 0 30px 20px;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background-color: var(--teal);
+        transition: width 0.3s ease;
+        width: 10%;
+    }
+
+    @media screen and (max-width: 600px) {
+        .quiz-container {
+            margin: 0;
+        }
+
+        .slide-container,
+        .navigation,
+        .instructions {
+            padding: 15px;
+        }
+
+        .nav-buttons {
+            gap: 5px;
+        }
+
+        .nav-button {
+            width: 35px;
+            height: 35px;
+            font-size: 14px;
+        }
+
+        .arrow-button {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="quiz-container">
+        <nav class="navigation" aria-label="Quiz navigation">
+            <div class="nav-buttons" role="tablist">
+                <button class="nav-button active" onclick="goToSlide(1)" role="tab" aria-selected="true" aria-controls="slide-1" id="tab-1" aria-label="Question 1">1</button>
+                <button class="nav-button" onclick="goToSlide(2)" role="tab" aria-selected="false" aria-controls="slide-2" id="tab-2" aria-label="Question 2">2</button>
+                <button class="nav-button" onclick="goToSlide(3)" role="tab" aria-selected="false" aria-controls="slide-3" id="tab-3" aria-label="Question 3">3</button>
+                <button class="nav-button" onclick="goToSlide(4)" role="tab" aria-selected="false" aria-controls="slide-4" id="tab-4" aria-label="Question 4">4</button>
+                <button class="nav-button" onclick="goToSlide(5)" role="tab" aria-selected="false" aria-controls="slide-5" id="tab-5" aria-label="Question 5">5</button>
+                <button class="nav-button" onclick="goToSlide(6)" role="tab" aria-selected="false" aria-controls="slide-6" id="tab-6" aria-label="Question 6">6</button>
+                <button class="nav-button" onclick="goToSlide(7)" role="tab" aria-selected="false" aria-controls="slide-7" id="tab-7" aria-label="Question 7">7</button>
+                <button class="nav-button" onclick="goToSlide(8)" role="tab" aria-selected="false" aria-controls="slide-8" id="tab-8" aria-label="Question 8">8</button>
+                <button class="nav-button" onclick="goToSlide(9)" role="tab" aria-selected="false" aria-controls="slide-9" id="tab-9" aria-label="Question 9">9</button>
+                <button class="nav-button" onclick="goToSlide(10)" role="tab" aria-selected="false" aria-controls="slide-10" id="tab-10" aria-label="Question 10">10</button>
+            </div>
+        </nav>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" role="progressbar"></div>
+        </div>
+        <form name="q1" onsubmit="return false">
+            <div class="slide-container" id="slideContainer" role="region" aria-live="polite">
+                <!-- Slide 1 -->
+                <fieldset class="slide active" id="slide-1" role="tabpanel" aria-labelledby="tab-1">
+                    <legend>
+                        <h3>When someone starts explaining a problem to you, your first instinct is to:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q1-a">Help them define what needs to be done and move toward a solution</label>
+                        </p>
+                        <input type="radio" id="q1-a" name="question1" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q1-b">Ask clarifying questions to fully understand the situation</label>
+                        </p>
+                        <input type="radio" id="q1-b" name="question1" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q1-c">Focus on how the situation is affecting them personally</label>
+                        </p>
+                        <input type="radio" id="q1-c" name="question1" value="c" autocomplete="off">
+                    </div>
+            
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q1-d">Question whether the problem is being framed correctly</label>
+                        </p>
+                        <input type="radio" id="q1-d" name="question1" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 2 -->
+                <fieldset class="slide" id="slide-2" role="tabpanel" aria-labelledby="tab-2">
+                    <legend>
+                        <h3>During meetings, you are most satisfied when:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q2-a">Clear decisions and action items are established</label>
+                        </p>
+                        <input type="radio" id="q2-a" name="question2" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q2-b">The information presented is thorough and well-reasoned</label>
+                        </p>
+                        <input type="radio" id="q2-b" name="question2" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q2-c">Everyone feels heard and respected</label>
+                        </p>
+                        <input type="radio" id="q2-c" name="question2" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q2-d">Weak arguments or flawed reasoning are challenged</label>
+                        </p>
+                        <input type="radio" id="q2-d" name="question2" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 3 -->
+                <fieldset class="slide" id="slide-3" role="tabpanel" aria-labelledby="tab-3">
+                    <legend>
+                        <h3>If a colleague is telling a long story, you tend to:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q3-a">Mentally summarise it into key points and outcomes</label>
+                        </p>
+                        <input type="radio" id="q3-a" name="question3" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q3-b">Track the sequence of events and details carefully</label>
+                        </p>
+                        <input type="radio" id="q3-b" name="question3" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q3-c">Pay attention to their tone, feelings and body language</label>
+                        </p>
+                        <input type="radio" id="q3-c" name="question3" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q3-d">Look for inconsistencies or unsupported claims</label>
+                        </p>
+                        <input type="radio" id="q3-d" name="question3" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 4 -->
+                <fieldset class="slide" id="slide-4" role="tabpanel" aria-labelledby="tab-4">
+                    <legend>
+                        <h3>When receiving instructions, you prefer them to be:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q4-a">Short, direct and focused on results</label>
+                        </p>
+                        <input type="radio" id="q4-a" name="question4" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q4-b">Detailed, structured and precise</label>
+                        </p>
+                        <input type="radio" id="q4-b" name="question4" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q4-c">Friendly, encouraging and conversational</label>
+                        </p>
+                        <input type="radio" id="q4-c" name="question4" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q4-d">Justified, with reasons and evidence</label>
+                        </p>
+                        <input type="radio" id="q4-d" name="question4" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 5 -->
+                <fieldset class="slide" id="slide-5" role="tabpanel" aria-labelledby="tab-5">
+                    <legend>
+                        <h3>If someone disagrees with you, your listening focus is on:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q5-a">Finding a practical way forward</label>
+                        </p>
+                        <input type="radio" id="q5-a" name="question5" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q5-b">Understanding the logic behind their position</label>
+                        </p>
+                        <input type="radio" id="q5-b" name="question5" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q5-c">Maintaining rapport and mutual respect</label>
+                        </p>
+                        <input type="radio" id="q5-c" name="question5" value="c" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q5-d">Evaluating the strength of their argument</label>
+                        </p>
+                        <input type="radio" id="q5-d" name="question5" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 6 -->
+                <fieldset class="slide" id="slide-6" role="tabpanel" aria-labelledby="tab-6">
+                    <legend>
+                        <h3>When listening to a presentation, you are most likely to:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q6-a">Think about how the ideas can be implemented</label>
+                        </p>
+                        <input type="radio" id="q6-a" name="question6" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q6-b">Analyse the data and explanations</label>
+                        </p>
+                        <input type="radio" id="q6-b" name="question6" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q6-c">Notice how engaged and comfortable the speaker seems</label>
+                        </p>
+                        <input type="radio" id="q6-c" name="question6" value="c" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q6-d">Assess the credibility of the claims being made</label>
+                        </p>
+                        <input type="radio" id="q6-d" name="question6" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 7 -->
+                <fieldset class="slide" id="slide-7" role="tabpanel" aria-labelledby="tab-7">
+                    <legend>
+                        <h3>In a conversation, you feel frustrated when:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q7-a">It drags on without a clear purpose</label>
+                        </p>
+                        <input type="radio" id="q7-a" name="question7" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q7-b">Information is vague or incomplete</label>
+                        </p>
+                        <input type="radio" id="q7-b" name="question7" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q7-c">Emotions or relationships are ignored</label>
+                        </p>
+                        <input type="radio" id="q7-c" name="question7" value="c" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q7-d">Poor reasoning goes unchallenged</label>
+                        </p>
+                        <input type="radio" id="q7-d" name="question7" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 8 -->
+                <fieldset class="slide" id="slide-8" role="tabpanel" aria-labelledby="tab-8">
+                    <legend>
+                        <h3>When someone asks for your advice, you usually respond by:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q8-a">Suggesting concrete steps or actions</label>
+                        </p>
+                        <input type="radio" id="q8-a" name="question8" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q8-b">Exploring the situation from multiple angles</label>
+                        </p>
+                        <input type="radio" id="q8-b" name="question8" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q8-c">Acknowledging their feelings before responding</label>
+                        </p>
+                        <input type="radio" id="q8-c" name="question8" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q8-d">Pointing out potential flaws or risks</label>
+                        </p>
+                        <input type="radio" id="q8-d" name="question8" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 9 -->
+                <fieldset class="slide" id="slide-9" role="tabpanel" aria-labelledby="tab-9">
+                    <legend>
+                        <h3>You believe good listening primarily means:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q9-a">Helping move things toward completion</label>
+                        </p>
+                        <input type="radio" id="q9-a" name="question9" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q9-b">Fully understanding the message being conveyed</label>
+                        </p>
+                        <input type="radio" id="q9-b" name="question9" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q9-c">Making the speaker feel understood</label>
+                        </p>
+                        <input type="radio" id="q9-c" name="question9" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q9-d">Judging the accuracy and quality of what is said</label>
+                        </p>
+                        <input type="radio" id="q9-d" name="question9" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 10 -->
+                <fieldset class="slide" id="slide-10" role="tabpanel" aria-labelledby="tab-10">
+                    <legend>
+                        <h3>After a conversation, you are most likely to remember:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q10-a">What needs to happen next</label>
+                        </p>
+                        <input type="radio" id="q10-a" name="question10" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q10-b">Key facts, explanations and details</label>
+                        </p>
+                        <input type="radio" id="q10-b" name="question10" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q10-c">How the person felt and how the interaction went</label>
+                        </p>
+                        <input type="radio" id="q10-c" name="question10" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q10-d">Whether the arguments were sound or weak</label>
+                        </p>
+                        <input type="radio" id="q10-d" name="question10" value="d" autocomplete="off">
+                    </div>
+                    <button class="submit-button" id="submitButton" onclick="formOne()" aria-label="Submit quiz and view results">
+                        Submit & View Results
+                    </button>
+                </fieldset>
+            </div>
+        </form>
+
+        <nav class="navigation" aria-label="Quiz navigation">
+            <button class="arrow-button" id="prevBtn" onclick="previousSlide()" aria-label="Previous question">
+                ← Previous
+            </button>
+            
+            <button class="arrow-button" id="nextBtn" onclick="nextSlide()" aria-label="Next question">
+                Next →
+            </button>
+        </nav>
+    </div>
+
+    <!-- Results Display -->
+    <div id="results" role="region" aria-live="polite" aria-label="Quiz results"></div>
+
+<script>
+let currentSlide = 1;
+const totalSlides = 10;
+
+function goToSlide(slideNumber) {
+    const slides = document.querySelectorAll('.slide');
+    slides.forEach(slide => slide.classList.remove('active'));
+    
+    document.getElementById(`slide-${slideNumber}`).classList.add('active');
+    
+    currentSlide = slideNumber;
+    updateButtons();
+    updateArrowButtons();
+    updateProgressBar();
+    updateSubmitButton();
+}
+
+function nextSlide() {
+    if (currentSlide < totalSlides) {
+        goToSlide(currentSlide + 1);
+    }
+}
+
+function previousSlide() {
+    if (currentSlide > 1) {
+        goToSlide(currentSlide - 1);
+    }
+}
+
+function updateButtons() {
+    const buttons = document.querySelectorAll('.nav-button');
+    buttons.forEach((btn, index) => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+        if (index === currentSlide - 1) {
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+        }
+    });
+}
+
+function updateArrowButtons() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    prevBtn.disabled = currentSlide === 1;
+    nextBtn.disabled = currentSlide === totalSlides;
+}
+
+function updateProgressBar() {
+    const progressFill = document.getElementById('progressFill');
+    const progress = (currentSlide / totalSlides) * 100;
+    progressFill.style.width = `${progress}%`;
+}
+
+function updateSubmitButton() {
+    const submitButton = document.getElementById('submitButton');
+    if (currentSlide === totalSlides) {
+        submitButton.style.display = 'block';
+    } else {
+        submitButton.style.display = 'none';
+    }
+}
+
+function formOne() {
+    const form = document.forms['q1'];
+    let aCount = 0;
+    let bCount = 0;
+    let cCount = 0;
+    let dCount = 0;
+    
+    for (let i = 1; i <= 10; i++) {
+        const question = form.elements[`question${i}`];
+        if (question && question.value) {
+            if (question.value === 'a') aCount++;
+            else if (question.value === 'b') bCount++;
+            else if (question.value === 'c') cCount++;
+            else if (question.value === 'd') dCount++;
+        }
+    }
+    
+    const results = document.getElementById("results");
+    results.style.display = "block";
+    
+    let resultStyle = Math.max(aCount, bCount, cCount, dCount);
+    
+    if (resultStyle < 2) {
+        results.innerHTML = `<h2>Incomplete Quiz</h2><p>Please complete the quiz before submitting. Make sure you've answered all questions.</p>`;
+    }
+    else if (resultStyle === aCount) {
+        results.innerHTML = `<h2>Task-Oriented Listener</h2><p>You are focused on efficiency, outcomes and next steps. You naturally listen for what needs to be done and how to move things forward. Your strength is in helping people get to the point and take action, though you may sometimes miss important emotional nuances or rush past necessary details in your drive for results.</p>`;
+    }
+    else if (resultStyle === bCount) {
+        results.innerHTML = `<h2>Analytical Listener</h2><p>You are focused on facts, logic and understanding details. You listen carefully to fully comprehend the message, track information precisely and ensure you have a complete picture before responding. Your strength is in thorough understanding and sound reasoning, though you may sometimes get caught up in details or delay action while seeking more information.</p>`;
+    }
+    else if (resultStyle === cCount) {
+        results.innerHTML = `<h2>Relational Listener</h2><p>You are focused on emotions, connection and the speaker. You naturally pay attention to how people are feeling, what they need emotionally and maintaining positive relationships. Your strength is in making people feel heard and valued, though you may sometimes avoid necessary conflict or difficult feedback to preserve harmony.</p>`;
+    }
+    else {
+        results.innerHTML = `<h2>Critical Listener</h2><p>You are focused on evaluation, assumptions and validity. You naturally assess the quality of arguments, question underlying assumptions and identify logical flaws or weak reasoning. Your strength is in maintaining high standards of thinking and catching errors, though you may sometimes come across as overly skeptical or make others feel defensive.</p>`;
+    }
+    console.log(aCount, bCount, cCount, dCount);
+    results.scrollIntoView({ behavior: 'smooth' });
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.target.tagName === 'INPUT') return;
+    
+    if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        previousSlide();
+    } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        nextSlide();
+    }
+});
+
+updateArrowButtons();
+updateProgressBar();
+updateSubmitButton();
+</script>
+</body>
+</html>
