@@ -603,11 +603,12 @@ function checkAnswers() {
 
     // Display results
     if (correctCount === correctOrder.length) {
-        showModal('That is correct.');
-        announceToScreenReader('Perfect! All items are correctly matched in the right order!');
+        showModal('Correct!', '<p>Identifying these connections can help you maintain order in stressful conversations.</p>');
+        announceToScreenReader('Correct. Identifying these connections can help you maintain order in stressful conversations.');
     } else {
         const percentage = Math.round((correctCount / correctOrder.length) * 100);
         let message = `<p>You got ${correctCount} out of ${correctOrder.length} correct (${percentage}%).</p>`;
+        message += '<p>Not quite.</p>';
         showModal('Results', message);
         
         const srMessage = `You got ${correctCount} out of ${correctOrder.length} correct. Incorrect items: ${incorrectItems.join(', ')}`;
