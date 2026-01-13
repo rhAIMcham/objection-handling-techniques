@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta lang="en">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+<title>Sales Stress Response Quiz</title>
+<style>
+    .checkContainer {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+    }
+    
+    :root {
+        --AIMblue: #4353A3;
+        --darkBlue: #38416D;
+        --teal: #5DC8B9;
+        --cream: #F1EEDE;
+        --grey: #e7e9ec;
+        --rust: #AF4510;
+        --navy: #12195C;
+        --white: #ffffff;
+        --lightBlue: #AEBAE4;
+    }
+
+    body {
+        font-family: "IBM Plex Sans", sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .quiz-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #F1EEDE30;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .slide-container {
+        padding: 30px;
+        padding-top: 15px;
+    }
+
+    .slide {
+        display: none;
+        width: 100%;
+    }
+
+    .slide.active {
+        display: block;
+    }
+
+    .slide h3 {
+        color: var(--AIMblue);
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    fieldset {
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .checkContainer {
+        display: flex;
+        align-items: flex-start;
+        margin: 20px 0;
+        padding: 15px;
+        background-color: var(--grey);
+        border-radius: 8px;
+    }
+
+    .instructions {
+        display: flex;
+        padding-left: 30px;
+    }
+
+    .checkContainer p {
+        margin: 0;
+        margin-right: 15px;
+        flex-grow: 1;
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    input[type="radio"] {
+        margin: 0;
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+
+    .navigation {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 20px 30px;
+        background-color: var(--grey);
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .nav-button {
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--AIMblue);
+        background-color: var(--white);
+        color: var(--AIMblue);
+        border-radius: 50%;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .nav-button:hover {
+        background-color: var(--lightBlue);
+    }
+
+    .nav-button.active {
+        background-color: var(--AIMblue);
+        color: var(--white);
+    }
+
+    .arrow-button {
+        padding: 10px 20px;
+        background-color: #5DC8B990;
+        color: black;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+    .arrow-button:hover:not(:disabled) {
+        background-color: var(--darkBlue);
+        color: white;
+    }
+
+    .arrow-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .submit-button {
+        padding: 15px 30px;
+        background-color: var(--teal);
+        color: var(--white);
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 20px auto;
+        display: none;
+    }
+
+    .submit-button:hover {
+        background-color: #4db5a5;
+    }
+
+    .submit-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    #results {
+        max-width: 800px;
+        margin: 15px auto;
+        background-color: var(--cream);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        display: none;
+        padding: 20px;
+    }
+
+    .progress-bar {
+        height: 6px;
+        background-color: var(--grey);
+        margin: 0 30px 20px;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background-color: var(--teal);
+        transition: width 0.3s ease;
+        width: 10%;
+    }
+
+    @media screen and (max-width: 600px) {
+        .quiz-container {
+            margin: 0;
+        }
+
+        .slide-container,
+        .navigation,
+        .instructions {
+            padding: 15px;
+        }
+
+        .nav-buttons {
+            gap: 5px;
+        }
+
+        .nav-button {
+            width: 35px;
+            height: 35px;
+            font-size: 14px;
+        }
+
+        .arrow-button {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="quiz-container">
+        <nav class="navigation" aria-label="Quiz navigation">
+            <div class="nav-buttons" role="tablist">
+                <button class="nav-button active" onclick="goToSlide(1)" role="tab" aria-selected="true" aria-controls="slide-1" id="tab-1" aria-label="Question 1">1</button>
+                <button class="nav-button" onclick="goToSlide(2)" role="tab" aria-selected="false" aria-controls="slide-2" id="tab-2" aria-label="Question 2">2</button>
+                <button class="nav-button" onclick="goToSlide(3)" role="tab" aria-selected="false" aria-controls="slide-3" id="tab-3" aria-label="Question 3">3</button>
+                <button class="nav-button" onclick="goToSlide(4)" role="tab" aria-selected="false" aria-controls="slide-4" id="tab-4" aria-label="Question 4">4</button>
+                <button class="nav-button" onclick="goToSlide(5)" role="tab" aria-selected="false" aria-controls="slide-5" id="tab-5" aria-label="Question 5">5</button>
+                <button class="nav-button" onclick="goToSlide(6)" role="tab" aria-selected="false" aria-controls="slide-6" id="tab-6" aria-label="Question 6">6</button>
+                <button class="nav-button" onclick="goToSlide(7)" role="tab" aria-selected="false" aria-controls="slide-7" id="tab-7" aria-label="Question 7">7</button>
+                <button class="nav-button" onclick="goToSlide(8)" role="tab" aria-selected="false" aria-controls="slide-8" id="tab-8" aria-label="Question 8">8</button>
+                <button class="nav-button" onclick="goToSlide(9)" role="tab" aria-selected="false" aria-controls="slide-9" id="tab-9" aria-label="Question 9">9</button>
+                <button class="nav-button" onclick="goToSlide(10)" role="tab" aria-selected="false" aria-controls="slide-10" id="tab-10" aria-label="Question 10">10</button>
+            </div>
+        </nav>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" role="progressbar"></div>
+        </div>
+        <form name="q1" onsubmit="return false" onchange="updateSubmitButton()">
+            <div class="slide-container" id="slideContainer" role="region" aria-live="polite">
+                <!-- Slide 1 -->
+                <fieldset class="slide active" id="slide-1" role="tabpanel" aria-labelledby="tab-1">
+                    <legend>
+                        <h3>When a prospect pushes back unexpectedly, your first reaction is to:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q1-a">Push your point harder and explain why they're wrong</label>
+                        </p>
+                        <input type="radio" id="q1-a" name="question1" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q1-b">Pivot the conversation or move on quickly</label>
+                        </p>
+                        <input type="radio" id="q1-b" name="question1" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q1-c">Pause, lose your train of thought, or go quiet</label>
+                        </p>
+                        <input type="radio" id="q1-c" name="question1" value="c" autocomplete="off">
+                    </div>
+            
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q1-d">Agree with them and soften your position</label>
+                        </p>
+                        <input type="radio" id="q1-d" name="question1" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 2 -->
+                <fieldset class="slide" id="slide-2" role="tabpanel" aria-labelledby="tab-2">
+                    <legend>
+                        <h3>When someone questions your price, you usually:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q2-a">Defend the price strongly and justify it in detail</label>
+                        </p>
+                        <input type="radio" id="q2-a" name="question2" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q2-b">Offer a discount or alternative quickly</label>
+                        </p>
+                        <input type="radio" id="q2-b" name="question2" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q2-c">Feel unsure and struggle to respond clearly</label>
+                        </p>
+                        <input type="radio" id="q2-c" name="question2" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q2-d">Emphasize flexibility and reassure them you'll make it work</label>
+                        </p>
+                        <input type="radio" id="q2-d" name="question2" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 3 -->
+                <fieldset class="slide" id="slide-3" role="tabpanel" aria-labelledby="tab-3">
+                    <legend>
+                        <h3>Under pressure in a conversation, you tend to:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q3-a">Become more forceful and assertive</label>
+                        </p>
+                        <input type="radio" id="q3-a" name="question3" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q3-b">Look for a way out or change direction</label>
+                        </p>
+                        <input type="radio" id="q3-b" name="question3" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q3-c">Freeze and sound less confident</label>
+                        </p>
+                        <input type="radio" id="q3-c" name="question3" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q3-d">Focus on keeping the other person comfortable</label>
+                        </p>
+                        <input type="radio" id="q3-d" name="question3" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 4 -->
+                <fieldset class="slide" id="slide-4" role="tabpanel" aria-labelledby="tab-4">
+                    <legend>
+                        <h3>If a meeting starts going badly, you're most likely to:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q4-a">Take control and challenge the other person's perspective</label>
+                        </p>
+                        <input type="radio" id="q4-a" name="question4" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q4-b">Shorten the meeting or redirect it</label>
+                        </p>
+                        <input type="radio" id="q4-b" name="question4" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q4-c">Withdraw and let the other person lead</label>
+                        </p>
+                        <input type="radio" id="q4-c" name="question4" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q4-d">Try to please them to regain rapport</label>
+                        </p>
+                        <input type="radio" id="q4-d" name="question4" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 5 -->
+                <fieldset class="slide" id="slide-5" role="tabpanel" aria-labelledby="tab-5">
+                    <legend>
+                        <h3>When faced with confrontation, you usually:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q5-a">Meet it head-on</label>
+                        </p>
+                        <input type="radio" id="q5-a" name="question5" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q5-b">Avoid it if possible</label>
+                        </p>
+                        <input type="radio" id="q5-b" name="question5" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q5-c">Shut down internally</label>
+                        </p>
+                        <input type="radio" id="q5-c" name="question5" value="c" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q5-d">Smooth things over</label>
+                        </p>
+                        <input type="radio" id="q5-d" name="question5" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 6 -->
+                <fieldset class="slide" id="slide-6" role="tabpanel" aria-labelledby="tab-6">
+                    <legend>
+                        <h3>If a prospect says "I need to think about it," you tend to:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q6-a">Push for a decision and question their hesitation</label>
+                        </p>
+                        <input type="radio" id="q6-a" name="question6" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q6-b">Accept it quickly and back off</label>
+                        </p>
+                        <input type="radio" id="q6-b" name="question6" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q6-c">Feel stuck and unsure what to say next</label>
+                        </p>
+                        <input type="radio" id="q6-c" name="question6" value="c" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q6-d">Agree and reassure them with extra concessions</label>
+                        </p>
+                        <input type="radio" id="q6-d" name="question6" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 7 -->
+                <fieldset class="slide" id="slide-7" role="tabpanel" aria-labelledby="tab-7">
+                    <legend>
+                        <h3>When you feel stressed mid-conversation, you notice yourself:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q7-a">Talking faster and arguing your case</label>
+                        </p>
+                        <input type="radio" id="q7-a" name="question7" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q7-b">Changing topics or ending early</label>
+                        </p>
+                        <input type="radio" id="q7-b" name="question7" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q7-c">Losing structure and clarity</label>
+                        </p>
+                        <input type="radio" id="q7-c" name="question7" value="c" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q7-d">Saying "yes" more than you intend to</label>
+                        </p>
+                        <input type="radio" id="q7-d" name="question7" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 8 -->
+                <fieldset class="slide" id="slide-8" role="tabpanel" aria-labelledby="tab-8">
+                    <legend>
+                        <h3>When an objection feels personal, you are most likely to:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q8-a">Defend yourself strongly</label>
+                        </p>
+                        <input type="radio" id="q8-a" name="question8" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q8-b">Create distance from the situation</label>
+                        </p>
+                        <input type="radio" id="q8-b" name="question8" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q8-c">Go quiet and inward</label>
+                        </p>
+                        <input type="radio" id="q8-c" name="question8" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q8-d">Seek approval and validation</label>
+                        </p>
+                        <input type="radio" id="q8-d" name="question8" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 9 -->
+                <fieldset class="slide" id="slide-9" role="tabpanel" aria-labelledby="tab-9">
+                    <legend>
+                        <h3>After a difficult interaction, you often realize you:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q9-a">Pushed too hard</label>
+                        </p>
+                        <input type="radio" id="q9-a" name="question9" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q9-b">Avoided the real issue</label>
+                        </p>
+                        <input type="radio" id="q9-b" name="question9" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q9-c">Didn't say what you wanted to say</label>
+                        </p>
+                        <input type="radio" id="q9-c" name="question9" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q9-d">Gave away too much</label>
+                        </p>
+                        <input type="radio" id="q9-d" name="question9" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 10 -->
+                <fieldset class="slide" id="slide-10" role="tabpanel" aria-labelledby="tab-10">
+                    <legend>
+                        <h3>Your default stress response in high-stakes conversations is to:</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q10-a">Fight for your position</label>
+                        </p>
+                        <input type="radio" id="q10-a" name="question10" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q10-b">Escape the discomfort</label>
+                        </p>
+                        <input type="radio" id="q10-b" name="question10" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q10-c">Freeze and hesitate</label>
+                        </p>
+                        <input type="radio" id="q10-c" name="question10" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q10-d">Please the other person</label>
+                        </p>
+                        <input type="radio" id="q10-d" name="question10" value="d" autocomplete="off">
+                    </div>
+                    <button class="submit-button" id="submitButton" onclick="formOne()" aria-label="Submit quiz and view results">
+                        Submit & View Results
+                    </button>
+                </fieldset>
+            </div>
+        </form>
+
+        <nav class="navigation" aria-label="Quiz navigation">
+            <button class="arrow-button" id="prevBtn" onclick="previousSlide()" aria-label="Previous question">
+                ← Previous
+            </button>
+            
+            <button class="arrow-button" id="nextBtn" onclick="nextSlide()" aria-label="Next question">
+                Next →
+            </button>
+        </nav>
+    </div>
+
+    <!-- Results Display -->
+    <div id="results" role="region" aria-live="polite" aria-label="Quiz results"></div>
+
+<script>
+let currentSlide = 1;
+const totalSlides = 10;
+
+function goToSlide(slideNumber) {
+    const slides = document.querySelectorAll('.slide');
+    slides.forEach(slide => slide.classList.remove('active'));
+    
+    document.getElementById(`slide-${slideNumber}`).classList.add('active');
+    
+    currentSlide = slideNumber;
+    updateButtons();
+    updateArrowButtons();
+    updateProgressBar();
+    updateSubmitButton();
+}
+
+function nextSlide() {
+    if (currentSlide < totalSlides) {
+        goToSlide(currentSlide + 1);
+    }
+}
+
+function previousSlide() {
+    if (currentSlide > 1) {
+        goToSlide(currentSlide - 1);
+    }
+}
+
+function updateButtons() {
+    const buttons = document.querySelectorAll('.nav-button');
+    buttons.forEach((btn, index) => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+        if (index === currentSlide - 1) {
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+        }
+    });
+}
+
+function updateArrowButtons() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    prevBtn.disabled = currentSlide === 1;
+    nextBtn.disabled = currentSlide === totalSlides;
+}
+
+function updateProgressBar() {
+    const progressFill = document.getElementById('progressFill');
+    const progress = (currentSlide / totalSlides) * 100;
+    progressFill.style.width = `${progress}%`;
+}
+
+function updateSubmitButton() {
+    const submitButton = document.getElementById('submitButton');
+    if (currentSlide === totalSlides) {
+        submitButton.style.display = 'block';
+        
+        // Check if all questions are answered
+        const form = document.forms['q1'];
+        let answeredCount = 0;
+        
+        for (let i = 1; i <= 10; i++) {
+            const question = form.elements[`question${i}`];
+            if (question && question.value) {
+                answeredCount++;
+            }
+        }
+        
+        // Enable button only if all 10 questions are answered
+        submitButton.disabled = answeredCount !== 10;
+    } else {
+        submitButton.style.display = 'none';
+    }
+}
+
+function formOne() {
+    const form = document.forms['q1'];
+    let aCount = 0;
+    let bCount = 0;
+    let cCount = 0;
+    let dCount = 0;
+    
+    for (let i = 1; i <= 10; i++) {
+        const question = form.elements[`question${i}`];
+        if (question && question.value) {
+            if (question.value === 'a') aCount++;
+            else if (question.value === 'b') bCount++;
+            else if (question.value === 'c') cCount++;
+            else if (question.value === 'd') dCount++;
+        }
+    }
+    
+    // Don't submit if not all questions are answered
+    const totalAnswered = aCount + bCount + cCount + dCount;
+    if (totalAnswered !== 10) {
+        return false;
+    }
+    
+    const results = document.getElementById("results");
+    results.style.display = "block";
+    
+    let resultStyle = Math.max(aCount, bCount, cCount, dCount);
+    
+    if (resultStyle < 2) {
+        results.innerHTML = `<h2>Incomplete Quiz</h2><p>Please complete the quiz before submitting. Make sure you've answered all questions.</p>`;
+    }
+    else if (resultStyle === aCount) {
+        results.innerHTML = `<h2>Fight Response</h2><p>When you’re stressed, you tend to become more assertive and push back hard. Your strengths are confidence, decisiveness and the ability to hold boundaries under pressure. The risk is that you may come across as defensive or confrontational, which can escalate resistance.<br><strong>Tip:</strong> Pause for 3–5 seconds before responding and lead with validation before asserting your point.</p>`;
+    }
+    else if (resultStyle === bCount) {
+        results.innerHTML = `<h2>Flight Response</h2><p>When stress shows up, you’re likely to avoid discomfort or move past the tension quickly. Your strengths are flexibility, adaptability and a natural focus on preserving rapport. The risk is that you may give away value too early or avoid addressing the real objection.<br><strong>Tip:</strong> Stay with the objection for one more question before offering solutions or concessions.</p>`;
+    }
+    else if (resultStyle === cCount) {
+        results.innerHTML = `<h2>Freeze Response</h2><p>Under stress, you may go quiet or lose your structure. Your strengths are thoughtfulness and careful consideration before you speak. The risk is that you can sound uncertain or disengaged, which may reduce your credibility.<br><strong>Tip:</strong> Prepare one or two neutral “holding” phrases you can use to regain structure in the moment.</p>`;
+    }
+    else {
+        results.innerHTML = `<h2>Fawn Response</h2><p>When you feel pressured, you tend to prioritize harmony and pleasing others. Your strengths are empathy, warmth and strong relationship-building skills. The risk is over-agreeing, over-accommodating or giving away value to be liked.<br><strong>Tip:</strong> Decide on one clear non-negotiable before the conversation to help you hold your ground.</p>`;
+    }
+    console.log(aCount, bCount, cCount, dCount);
+    results.scrollIntoView({ behavior: 'smooth' });
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.target.tagName === 'INPUT') {
+        // Prevent Enter key from submitting the form
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            return;
+        }
+        return;
+    }
+    
+    if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        previousSlide();
+    } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        nextSlide();
+    }
+});
+
+updateArrowButtons();
+updateProgressBar();
+updateSubmitButton();
+</script>
+</body>
+</html>
