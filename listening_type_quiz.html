@@ -167,6 +167,12 @@
         background-color: #4db5a5;
     }
 
+    .submit-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
     #results {
         max-width: 800px;
         margin: 15px auto;
@@ -240,7 +246,7 @@
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill" role="progressbar"></div>
         </div>
-        <form name="q1" onsubmit="return false">
+        <form name="q1" onsubmit="return false" onchange="updateSubmitButton()">
             <div class="slide-container" id="slideContainer" role="region" aria-live="polite">
                 <!-- Slide 1 -->
                 <fieldset class="slide active" id="slide-1" role="tabpanel" aria-labelledby="tab-1">
@@ -670,6 +676,20 @@ function updateSubmitButton() {
     const submitButton = document.getElementById('submitButton');
     if (currentSlide === totalSlides) {
         submitButton.style.display = 'block';
+        
+        // Check if all questions are answered
+        const form = document.forms['q1'];
+        let answeredCount = 0;
+        
+        for (let i = 1; i <= 10; i++) {
+            const question = form.elements[`question${i}`];
+            if (question && question.value) {
+                answeredCount++;
+            }
+        }
+        
+        // Enable button only if all 10 questions are answered
+        submitButton.disabled = answeredCount !== 10;
     } else {
         submitButton.style.display = 'none';
     }
@@ -692,6 +712,12 @@ function formOne() {
         }
     }
     
+    // Don't submit if not all questions are answered
+    const totalAnswered = aCount + bCount + cCount + dCount;
+    if (totalAnswered !== 10) {
+        return false;
+    }
+    
     const results = document.getElementById("results");
     results.style.display = "block";
     
@@ -712,12 +738,19 @@ function formOne() {
     else {
         results.innerHTML = `<h2>Critical Listener</h2><p>You are focused on evaluation, assumptions and validity. You naturally assess the quality of arguments, question underlying assumptions and identify logical flaws or weak reasoning. Your strength is in maintaining high standards of thinking and catching errors, though you may sometimes come across as overly skeptical or make others feel defensive.</p>`;
     }
-    console.log(aCount, bCount, cCount, dCount);
+    
     results.scrollIntoView({ behavior: 'smooth' });
 }
 
 document.addEventListener('keydown', function(event) {
-    if (event.target.tagName === 'INPUT') return;
+    if (event.target.tagName === 'INPUT') {
+        // Prevent Enter key from submitting the form
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            return;
+        }
+        return;
+    }
     
     if (event.key === 'ArrowLeft') {
         event.preventDefault();
