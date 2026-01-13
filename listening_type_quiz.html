@@ -727,16 +727,16 @@ function formOne() {
         results.innerHTML = `<h2>Incomplete Quiz</h2><p>Please complete the quiz before submitting. Make sure you've answered all questions.</p>`;
     }
     else if (resultStyle === aCount) {
-        results.innerHTML = `<h2>Task-Oriented Listener</h2><p>You are focused on efficiency, outcomes and next steps. You naturally listen for what needs to be done and how to move things forward. Your strength is in helping people get to the point and take action, though you may sometimes miss important emotional nuances or rush past necessary details in your drive for results.</p>`;
+        results.innerHTML = `<h2>Task-Oriented Listener</h2><p><strong>Core focus:</strong> Efficiency, outcomes and next steps. <br><strong>How you listen:</strong> You listen with the goal of identifying what needs to be done. You naturally steer conversations toward decisions, solutions and next steps, often summarising or redirecting when discussions feel unfocused.</p>`;
     }
     else if (resultStyle === bCount) {
-        results.innerHTML = `<h2>Analytical Listener</h2><p>You are focused on facts, logic and understanding details. You listen carefully to fully comprehend the message, track information precisely and ensure you have a complete picture before responding. Your strength is in thorough understanding and sound reasoning, though you may sometimes get caught up in details or delay action while seeking more information.</p>`;
+        results.innerHTML = `<h2>Analytical Listener</h2><p><strong>Core focus:</strong> Understanding, logic and accuracy.  <br><strong>How you listen:</strong> You listen to make sense of information. You ask clarifying questions, seek evidence and want a complete picture before forming conclusions.</p>`;
     }
     else if (resultStyle === cCount) {
-        results.innerHTML = `<h2>Relational Listener</h2><p>You are focused on emotions, connection and the speaker. You naturally pay attention to how people are feeling, what they need emotionally and maintaining positive relationships. Your strength is in making people feel heard and valued, though you may sometimes avoid necessary conflict or difficult feedback to preserve harmony.</p>`;
+        results.innerHTML = `<h2>Relational Listener</h2><p><strong>Core focus:</strong> Connection, empathy and understanding people.  <br><strong>How you listen:</strong> You listen to understand the person, not just the message. You pay attention to emotions, tone and non-verbal cues, aiming to make others feel heard and supported.</p>`;
     }
     else {
-        results.innerHTML = `<h2>Critical Listener</h2><p>You are focused on evaluation, assumptions and validity. You naturally assess the quality of arguments, question underlying assumptions and identify logical flaws or weak reasoning. Your strength is in maintaining high standards of thinking and catching errors, though you may sometimes come across as overly skeptical or make others feel defensive.</p>`;
+        results.innerHTML = `<h2>Critical Listener</h2><p><strong>Core focus:</strong> Evaluation, accuracy and validity.  <br><strong>How you listen:</strong> You listen to judge the quality of what is being said. You assess logic, assumptions, bias and credibility, often questioning ideas before accepting them.</p>`;
     }
     
     results.scrollIntoView({ behavior: 'smooth' });
