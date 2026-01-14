@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Stress triggers</title>
+    <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+<style>
+    :root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --cream: #F1EEDE;
+  --grey: #e7e9ec;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #ffffff;
+  --lightBlue: #AEBAE4;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: white;
+}
+
+.containment {
+  width: fit-content;
+  margin: auto;
+}
+
+p {
+  padding-right: 10px;
+}
+
+li {
+  list-style: none;
+  padding: 5px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  min-width: 60px;
+  height: 34px;
+  margin-left: 40px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #AF4510;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--lightBlue);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 0 3px var(--lightBlue), inset 0 0 0 2px var(--lightBlue);
+  outline: 2px solid var(--lightBlue);
+  outline-offset: 2px;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+fieldset {
+  width: fit-content;
+  margin-top: 40px;
+}
+
+.checkContainer {
+  border-bottom: grey 2px dotted;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 5px;
+}
+
+button {
+  font-family: "IBM Plex Sans", sans-serif;
+  background-color: #12195C;
+  position: relative;
+  color: white;
+  width: 200px;
+  border: solid 2px var(--cream);
+  border-radius: 8px;
+  margin: 10px;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 1rem;
+  float: right;
+}
+
+button:hover {
+  background-color: var(--lightBlue);
+  color: #12195C;
+  border: solid 2px #12195C;
+}
+
+.triggerLabel {
+  opacity: 0;
+  transition: opacity 0.5s ease-in;
+  font-style: italic;
+  color: var(--AIMblue);
+  margin-left: 10px;
+  font-weight: 600;
+}
+
+.triggerLabel.visible {
+  opacity: 1;
+}
+
+.buttonBar {
+  display: flex;
+  justify-content: space-around;
+}
+.hiddenButton {
+  display: none;
+}
+#results {
+    text-align: center;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 1.1rem;
+  max-width: 600px;
+    margin: 10px auto;
+}
+.labelSmall {
+  display: none;
+}
+legend {
+  font-size: 2rem;
+}
+.cardResults {
+  display: none;
+}
+.instruction {
+  text-align: center;
+  margin-top: 20px;
+}
+   @media screen and (max-width: 800px) {
+.buttonBar {
+  display: flex;
+  flex-wrap: wrap;
+}
+.labelSmall {
+  display: none;
+}
+fieldset {
+  margin-top: 10px;
+}
+}
+ @media screen and (max-height: 380px) {
+  body {
+    background-color: var(--lightBlue);
+  }
+form {
+  display: none;
+}
+.buttonBar {
+display: none;
+}
+.containment {
+  width: auto;
+}
+#results {
+  display: none;
+}
+.instruction {
+  display: none;
+}
+.cardResults {
+  display: block;
+}
+.labelSmall {
+  width: fit-content;
+  text-align: center;
+  background-color: var(--lightBlue);
+  color: black;
+  height: 180px;
+  display: block;
+  margin: auto;
+  border-radius: 8px;
+}
+   .labelSmall > h3 {
+     padding: 30px 20px;
+   }
+ }
+  </style>
+</head>
+<body>
+<div class="containment">
+  <div class="labelSmall">
+    <h3 id="labelText">Stress Triggers</h3>
+  </div>
+<form name="Environmental Stress" onsubmit="return false" onchange="calculate(this)">
+ <fieldset>
+  <legend>Stress triggers</legend>
+
+   <div class="formContainer">
+     <div class="checkContainer">
+          
+  <p><strong>Select the statements that most closely aligned, and see what underlying trigger may be associated.</strong></p>
+       <h4>NO / YES</h4>
+     </div>
+  <!--Check 1-->
+     <div class="checkContainer">
+     <p label="question1">The prospect's pushback felt like personal dismissal.
+    </p><p class="triggerLabel" id="trigger1">Fear of rejection.</p>
+   <label class="switch">
+        <input
+          type="checkbox"
+          role="switch"
+          name=one
+          autocomplete="off"
+          onchange="toggleTrigger('trigger1', this)"
+          unchecked>
+     <span class="slider round"></span></label></div>
+   
+  <!--Check 2-->
+   <div class="checkContainer">
+   <p>You had a strong emotional need for the deal to close.
+     </p><p class="triggerLabel" id="trigger2">Outcome attachment.</p>
+   <label class="switch">
+        <input 
+          type="checkbox"
+          role="switch"
+          name=two
+          autocomplete="off"
+          onchange="toggleTrigger('trigger2', this)"
+          unchecked>
+       <span class="slider round"></span></label></div>
+  
+   <!--Check 3-->
+   <div class="checkContainer">
+   <p>You worried about appearing inexperienced or unskilled.
+   </p><p class="triggerLabel" id="trigger3">Threat to competence.</p>
+      <label class="switch">
+        <input 
+        type="checkbox"
+        role="switch"
+        name=three
+        autocomplete="off"
+        onchange="toggleTrigger('trigger3', this)"
+        unchecked>
+       <span class="slider round"></span></label></div>
+  
+   <!--Check 4-->
+   <div class="checkContainer">
+   <p>Your desire to be liked outweighed the desire for clarity or leadership.
+     </p><p class="triggerLabel" id="trigger4">Need for approval.</p>
+   <label class="switch">
+        <input
+        type="checkbox"
+        role="switch"
+        name=four
+        autocomplete="off"
+        onchange="toggleTrigger('trigger4', this)"
+        unchecked>
+       <span class="slider round"></span></label></div>
+  
+   <!--Check 5-->
+   <div class="checkContainer">
+   <p>You felt the conversation drifting off script or structure.
+     </p><p class="triggerLabel" id="trigger5">Loss of control.</p>
+     <label class="switch">
+        <input
+        type="checkbox"
+        role="switch"
+        name=five
+        autocomplete="off"
+        onchange="toggleTrigger('trigger5', this)"
+        unchecked>
+       <span class="slider round"></span></label></div>
+       
+   <!--Check 6-->
+   <div class="checkContainer">
+   <p>You believed the opportunity was rare and must not be lost.
+     </p><p class="triggerLabel" id="trigger6">Scarcity mindset.</p>
+     <label class="switch">
+        <input
+        type="checkbox"
+        role="switch"
+        name=six
+        autocomplete="off"
+        onchange="toggleTrigger('trigger6', this)"
+        unchecked>
+       <span class="slider round"></span></label></div>
+       
+   <!--Check 7-->
+   <div class="checkContainer">
+   <p>You felt a huge discomfort with disagreement or even healthy tension.
+   </p><p class="triggerLabel" id="trigger7">Fear of conflict.</p>
+     <label class="switch">
+        <input
+        type="checkbox"
+        role="switch"
+        name=seven
+        autocomplete="off"
+        onchange="toggleTrigger('trigger7', this)"
+        unchecked>
+       <span class="slider round"></span></label></div>
+       
+   <!--Check 8-->
+   <div class="checkContainer">
+   <p>You interpreting objections as a judgement of your self-worth or role.
+   </p><p class="triggerLabel" id="trigger8">Identity threat.</p>
+     <label class="switch">
+        <input
+        type="checkbox"
+        role="switch"
+        name=eight
+        autocomplete="off"
+        onchange="toggleTrigger('trigger8', this)"
+        unchecked>
+       <span class="slider round"></span></label></div>
+          
+   <!--Check 9-->
+   <div class="checkContainer">
+   <p>You were anxious about running out of time or delaying the close.
+   </p><p class="triggerLabel" id="trigger9">Time pressure.</p>
+     <label class="switch">
+        <input
+        type="checkbox"
+        role="switch"
+        name=nine
+        autocomplete="off"
+        onchange="toggleTrigger('trigger9', this)"
+        unchecked>
+       <span class="slider round"></span></label></div>
+          
+   <!--Check 10-->
+   <div class="checkContainer">
+   <p>You were worried about not having the "right" answer or being challenged.
+   </p><p class="triggerLabel" id="trigger10">Fear of being exposed.</p>
+     <label class="switch">
+        <input
+        type="checkbox"
+        role="switch"
+        name=ten
+        autocomplete="off"
+        onchange="toggleTrigger('trigger10', this)"
+        unchecked>
+       <span class="slider round"></span></label></div>
+   </div>
+  
+  <p class="cardResults">Total:<output name=result id="numericalResult"></output></p>
+ </fieldset>
+  
+ <script>
+  calculate(document.forms.scorecalc);
+ </script>
+</form>
+
+<div class="buttonBar">
+<button id="hideMe" onclick="show(); hideButton(); addAnswers()">Results</button>
+</div>
+<p id="results"></p>
+  </div>
+</body>
+<script>
+function toggleTrigger(triggerId, checkbox) {
+  const trigger = document.getElementById(triggerId);
+  if (checkbox.checked) {
+    trigger.classList.add('visible');
+  } else {
+    trigger.classList.remove('visible');
+  }
+  calculate(checkbox.form);
+}
+
+function calculate(form) {
+  const checkNames = [
+    'one', 'two', 'three', 'four', 'five', 'six',
+    'seven', 'eight', 'nine', 'ten'
+  ];
+  let score = 0;
+  checkNames.forEach(name => {
+    if (form.elements[name].checked) score += 1;
+  });
+  form.elements.result.value = score;
+}  
+
+function addAnswers() {
+    
+}
+//function hideButton() {
+//var y = document.getElementById("labelText");
+//    y.classList.toggle("hiddenButton");
+//}
+//TODO: Make it remove the labelText permanently - maybe I should just apply the results to the label text!?
+
+ function show() {
+  var x = Number(document.getElementById("numericalResult").value);
+  var y = document.getElementById("results");
+  var z = document.getElementById("labelText");
+  console.log(x);
+
+  if (x <= 3) {
+     y.innerHTML = z.innerHTML = 'Triggers are normal and universal. Sales mastery comes not from eliminating them, but from recognising them early and responding with intentional, process-driven behaviours rather than reactive ones.';
+  } else if (x > 3 && x <= 5) {
+    y.innerHTML = z.innerHTML = 'Triggers are normal and universal. Sales mastery comes not from eliminating them, but from recognising them early and responding with intentional, process-driven behaviours rather than reactive ones.';
+  } else if (x > 5 && x < 9) {
+   y.innerHTML = z.innerHTML = 'Triggers are normal and universal. Sales mastery comes not from eliminating them, but from recognising them early and responding with intentional, process-driven behaviours rather than reactive ones.';
+  } else if (x >= 9) {
+    y.innerHTML = z.innerHTML = 'Triggers are normal and universal. Sales mastery comes not from eliminating them, but from recognising them early and responding with intentional, process-driven behaviours rather than reactive ones.';
+  }
+}
+</script>
+</html>
