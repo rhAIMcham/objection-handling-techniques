@@ -604,8 +604,8 @@ function checkAnswers() {
 
     // Display results
     if (correctCount === correctOrder.length) {
-        showModal('Correct!', '<p>Identifying these connections can help you maintain order in stressful conversations.</p>');
-        announceToScreenReader('Correct. Identifying these connections can help you maintain order in stressful conversations.');
+        showModal('Correct!', '<p>Keeping the conversation relevant keeps the prospect engaged, and your call on track.</p>');
+        announceToScreenReader('Correct. Keeping the conversation relevant keeps the prospect engaged, and your call on track.');
     } else {
         const percentage = Math.round((correctCount / correctOrder.length) * 100);
         let message = `<p>You got ${correctCount} out of ${correctOrder.length} correct (${percentage}%).</p>`;
