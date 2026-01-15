@@ -694,7 +694,6 @@ function updateSubmitButton() {
         submitButton.style.display = 'none';
     }
 }
-
 function formOne() {
     const form = document.forms['q1'];
     let aCount = 0;
@@ -721,27 +720,60 @@ function formOne() {
     const results = document.getElementById("results");
     results.style.display = "block";
     
-    let resultStyle = Math.max(aCount, bCount, cCount, dCount);
+    let maxCount = Math.max(aCount, bCount, cCount, dCount);
     
-    if (resultStyle < 2) {
+    // Check for ties
+    const tiedItems = [];
+    if (aCount === maxCount) tiedItems.push('a');
+    if (bCount === maxCount) tiedItems.push('b');
+    if (cCount === maxCount) tiedItems.push('c');
+    if (dCount === maxCount) tiedItems.push('d');
+    
+    // Style descriptions
+    const styles = {
+        'a': {
+            title: 'Task-Oriented Listener',
+            description: '<strong>Core focus:</strong> Efficiency, outcomes and next steps. <br><strong>How you listen:</strong> You listen with the goal of identifying what needs to be done. You naturally steer conversations toward decisions, solutions and next steps, often summarising or redirecting when discussions feel unfocused.'
+        },
+        'b': {
+            title: 'Analytical Listener',
+            description: '<strong>Core focus:</strong> Understanding, logic and accuracy.  <br><strong>How you listen:</strong> You listen to make sense of information. You ask clarifying questions, seek evidence and want a complete picture before forming conclusions.'
+        },
+        'c': {
+            title: 'Relational Listener',
+            description: '<strong>Core focus:</strong> Connection, empathy and understanding people.  <br><strong>How you listen:</strong> You listen to understand the person, not just the message. You pay attention to emotions, tone and non-verbal cues, aiming to make others feel heard and supported.'
+        },
+        'd': {
+            title: 'Critical Listener',
+            description: '<strong>Core focus:</strong> Evaluation, accuracy and validity.  <br><strong>How you listen:</strong> You listen to judge the quality of what is being said. You assess logic, assumptions, bias and credibility, often questioning ideas before accepting them.'
+        }
+    };
+    
+    if (maxCount < 2) {
         results.innerHTML = `<h2>Incomplete Quiz</h2><p>Please complete the quiz before submitting. Make sure you've answered all questions.</p>`;
     }
-    else if (resultStyle === aCount) {
-        results.innerHTML = `<h2>Task-Oriented Listener</h2><p><strong>Core focus:</strong> Efficiency, outcomes and next steps. <br><strong>How you listen:</strong> You listen with the goal of identifying what needs to be done. You naturally steer conversations toward decisions, solutions and next steps, often summarising or redirecting when discussions feel unfocused.</p>`;
+    else if (tiedItems.length > 1) {
+        let tieHTML = '<h2>Mixed Listening Style</h2><p>You have a balanced approach across multiple listening styles:</p>';
+        tiedItems.forEach(item => {
+            tieHTML += `<h3>${styles[item].title}</h3><p>${styles[item].description}</p>`;
+        });
+        results.innerHTML = tieHTML;
     }
-    else if (resultStyle === bCount) {
-        results.innerHTML = `<h2>Analytical Listener</h2><p><strong>Core focus:</strong> Understanding, logic and accuracy.  <br><strong>How you listen:</strong> You listen to make sense of information. You ask clarifying questions, seek evidence and want a complete picture before forming conclusions.</p>`;
+    else if (maxCount === aCount) {
+        results.innerHTML = `<h2>${styles['a'].title}</h2><p>${styles['a'].description}</p>`;
     }
-    else if (resultStyle === cCount) {
-        results.innerHTML = `<h2>Relational Listener</h2><p><strong>Core focus:</strong> Connection, empathy and understanding people.  <br><strong>How you listen:</strong> You listen to understand the person, not just the message. You pay attention to emotions, tone and non-verbal cues, aiming to make others feel heard and supported.</p>`;
+    else if (maxCount === bCount) {
+        results.innerHTML = `<h2>${styles['b'].title}</h2><p>${styles['b'].description}</p>`;
+    }
+    else if (maxCount === cCount) {
+        results.innerHTML = `<h2>${styles['c'].title}</h2><p>${styles['c'].description}</p>`;
     }
     else {
-        results.innerHTML = `<h2>Critical Listener</h2><p><strong>Core focus:</strong> Evaluation, accuracy and validity.  <br><strong>How you listen:</strong> You listen to judge the quality of what is being said. You assess logic, assumptions, bias and credibility, often questioning ideas before accepting them.</p>`;
+        results.innerHTML = `<h2>${styles['d'].title}</h2><p>${styles['d'].description}</p>`;
     }
     
     results.scrollIntoView({ behavior: 'smooth' });
 }
-
 document.addEventListener('keydown', function(event) {
     if (event.target.tagName === 'INPUT') {
         // Prevent Enter key from submitting the form
