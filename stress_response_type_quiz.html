@@ -721,24 +721,58 @@ function formOne() {
     const results = document.getElementById("results");
     results.style.display = "block";
     
-    let resultStyle = Math.max(aCount, bCount, cCount, dCount);
+    let maxCount = Math.max(aCount, bCount, cCount, dCount);
     
-    if (resultStyle < 2) {
+    // Check for ties
+    const tiedItems = [];
+    if (aCount === maxCount) tiedItems.push('a');
+    if (bCount === maxCount) tiedItems.push('b');
+    if (cCount === maxCount) tiedItems.push('c');
+    if (dCount === maxCount) tiedItems.push('d');
+    
+    // Style descriptions
+    const styles = {
+        'a': {
+            title: 'Fight Response',
+            description: 'When you’re stressed, you tend to become more assertive and push back hard. Your strengths are confidence, decisiveness and the ability to hold boundaries under pressure. The risk is that you may come across as defensive or confrontational, which can escalate resistance.<br><strong>Tip:</strong> Pause for 3–5 seconds before responding and lead with validation before asserting your point.'
+        },
+        'b': {
+            title: 'Flight Response',
+            description: 'When stress shows up, you’re likely to avoid discomfort or move past the tension quickly. Your strengths are flexibility, adaptability and a natural focus on preserving rapport. The risk is that you may give away value too early or avoid addressing the real objection.<br><strong>Tip:</strong> Stay with the objection for one more question before offering solutions or concessions.'
+        },
+        'c': {
+            title: 'Freeze Response',
+            description: 'When stress shows up, you’re likely to avoid discomfort or move past the tension quickly. Your strengths are flexibility, adaptability and a natural focus on preserving rapport. The risk is that you may give away value too early or avoid addressing the real objection.<br><strong>Tip:</strong> Stay with the objection for one more question before offering solutions or concessions.'
+        },
+        'd': {
+            title: 'Fawn Response',
+            description: 'When you feel pressured, you tend to prioritize harmony and pleasing others. Your strengths are empathy, warmth and strong relationship-building skills. The risk is over-agreeing, over-accommodating or giving away value to be liked.<br><strong>Tip:</strong> Decide on one clear non-negotiable before the conversation to help you hold your ground.'
+        }
+    };
+    
+    if (maxCount < 2) {
         results.innerHTML = `<h2>Incomplete Quiz</h2><p>Please complete the quiz before submitting. Make sure you've answered all questions.</p>`;
     }
-    else if (resultStyle === aCount) {
-        results.innerHTML = `<h2>Fight Response</h2><p>When you’re stressed, you tend to become more assertive and push back hard. Your strengths are confidence, decisiveness and the ability to hold boundaries under pressure. The risk is that you may come across as defensive or confrontational, which can escalate resistance.<br><strong>Tip:</strong> Pause for 3–5 seconds before responding and lead with validation before asserting your point.</p>`;
+    else if (tiedItems.length > 1) {
+        let tieHTML = '<h2>Mixed response style</h2><p>You have a mixed response across stress responses:</p>';
+        tiedItems.forEach(item => {
+            tieHTML += `<h3>${styles[item].title}</h3><p>${styles[item].description}</p>`;
+        });
+        results.innerHTML = tieHTML;
     }
-    else if (resultStyle === bCount) {
-        results.innerHTML = `<h2>Flight Response</h2><p>When stress shows up, you’re likely to avoid discomfort or move past the tension quickly. Your strengths are flexibility, adaptability and a natural focus on preserving rapport. The risk is that you may give away value too early or avoid addressing the real objection.<br><strong>Tip:</strong> Stay with the objection for one more question before offering solutions or concessions.</p>`;
+    else if (maxCount === aCount) {
+        results.innerHTML = `<h2>${styles['a'].title}</h2><p>${styles['a'].description}</p>`;
     }
-    else if (resultStyle === cCount) {
-        results.innerHTML = `<h2>Freeze Response</h2><p>Under stress, you may go quiet or lose your structure. Your strengths are thoughtfulness and careful consideration before you speak. The risk is that you can sound uncertain or disengaged, which may reduce your credibility.<br><strong>Tip:</strong> Prepare one or two neutral “holding” phrases you can use to regain structure in the moment.</p>`;
+    else if (maxCount === bCount) {
+        results.innerHTML = `<h2>${styles['b'].title}</h2><p>${styles['b'].description}</p>`;
+    }
+    else if (maxCount === cCount) {
+        results.innerHTML = `<h2>${styles['c'].title}</h2><p>${styles['c'].description}</p>`;
     }
     else {
-        results.innerHTML = `<h2>Fawn Response</h2><p>When you feel pressured, you tend to prioritize harmony and pleasing others. Your strengths are empathy, warmth and strong relationship-building skills. The risk is over-agreeing, over-accommodating or giving away value to be liked.<br><strong>Tip:</strong> Decide on one clear non-negotiable before the conversation to help you hold your ground.</p>`;
+        results.innerHTML = `<h2>${styles['d'].title}</h2><p>${styles['d'].description}</p>`;
     }
-    console.log(aCount, bCount, cCount, dCount);
+    
     results.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -766,4 +800,4 @@ updateProgressBar();
 updateSubmitButton();
 </script>
 </body>
-</html>
+</html> 
